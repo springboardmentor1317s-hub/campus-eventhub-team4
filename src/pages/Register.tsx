@@ -91,8 +91,7 @@ const Register = () => {
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="student">Student</SelectItem>
-                    <SelectItem value="organizer">Event Organizer</SelectItem>
-                    <SelectItem value="admin">Administrator</SelectItem>
+                    <SelectItem value="college-admin">College Admin</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
