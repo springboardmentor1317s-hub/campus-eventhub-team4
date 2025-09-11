@@ -69,6 +69,13 @@ export default {
           border: "hsl(var(--sidebar-border))",
           ring: "hsl(var(--sidebar-ring))",
         },
+        dark: {
+          DEFAULT: "hsl(var(--dark-background))",
+          surface: "hsl(var(--dark-surface))",
+          text: "hsl(var(--dark-text))",
+          "text-secondary": "hsl(var(--dark-text-secondary))",
+        },
+        "hero-accent": "hsl(var(--hero-accent))",
       },
       fontFamily: {
         inter: ['Inter', 'sans-serif'],
