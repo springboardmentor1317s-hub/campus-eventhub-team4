@@ -24,14 +24,14 @@ const StudentDashboard = () => {
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Welcome Message */}
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-foreground mb-2">Welcome, Student!</h1>
+          <h1 className="text-3xl font-bold text-foreground mb-2">Welcome back, John!</h1>
           <p className="text-muted-foreground">Discover and register for exciting campus events</p>
         </div>
 
-        {/* My Registered Events Section */}
+        {/* My Upcoming Events Section */}
         <Card>
           <CardHeader>
-            <CardTitle>My Registered Events</CardTitle>
+            <CardTitle>My Upcoming Events</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-center py-12">
@@ -40,8 +40,8 @@ const StudentDashboard = () => {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M8 7V3a1 1 0 011-1h6a1 1 0 011 1v4m-8 0h8m-8 0V19a2 2 0 002 2h4a2 2 0 002-2V7" />
                 </svg>
               </div>
-              <h3 className="text-lg font-medium text-foreground mb-2">No registered events yet</h3>
-              <p className="text-muted-foreground">You haven't registered for any events yet.</p>
+              <h3 className="text-lg font-medium text-foreground mb-2">You haven't registered for any events yet</h3>
+              <p className="text-muted-foreground">Start exploring!</p>
             </div>
           </CardContent>
         </Card>

@@ -1,22 +1,20 @@
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import heroStudentsImage from "@/assets/hero-students.jpg";
 import campusBackgroundImage from "@/assets/campus-background.jpg";
 
 const Index = () => {
   return (
     <div 
-      className="min-h-screen bg-dark text-dark-text relative"
+      className="min-h-screen bg-background text-foreground relative"
       style={{
-        backgroundImage: `linear-gradient(rgba(34, 40, 49, 0.8), rgba(34, 40, 49, 0.8)), url(${campusBackgroundImage})`,
+        backgroundImage: `linear-gradient(rgba(255, 255, 255, 0.85), rgba(255, 255, 255, 0.85)), url(${campusBackgroundImage})`,
         backgroundSize: 'cover',
         backgroundPosition: 'center',
         backgroundAttachment: 'fixed'
       }}
     >
       {/* Header */}
-      <header className="bg-dark-surface/80 backdrop-blur-sm border-b border-white/10">
+      <header className="bg-white/80 backdrop-blur-sm border-b border-border">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center">
@@ -27,16 +25,16 @@ const Index = () => {
             
             {/* Center Navigation */}
             <nav className="hidden lg:flex space-x-8">
-              <a href="#features" className="text-dark-text-secondary hover:text-dark-text transition-colors">
+              <a href="#features" className="text-muted-foreground hover:text-foreground transition-colors">
                 Features
               </a>
-              <a href="#students" className="text-dark-text-secondary hover:text-dark-text transition-colors">
+              <a href="#students" className="text-muted-foreground hover:text-foreground transition-colors">
                 For Students
               </a>
-              <a href="#organizers" className="text-dark-text-secondary hover:text-dark-text transition-colors">
+              <a href="#organizers" className="text-muted-foreground hover:text-foreground transition-colors">
                 For Organizers
               </a>
-              <a href="#contact" className="text-dark-text-secondary hover:text-dark-text transition-colors">
+              <a href="#contact" className="text-muted-foreground hover:text-foreground transition-colors">
                 Contact
               </a>
             </nav>
@@ -44,7 +42,7 @@ const Index = () => {
             {/* Right Actions */}
             <div className="flex items-center space-x-4">
               <Link to="/login">
-                <Button variant="ghost" className="text-dark-text-secondary hover:text-dark-text">
+                <Button variant="ghost" className="text-muted-foreground hover:text-foreground">
                   Sign In
                 </Button>
               </Link>
@@ -58,25 +56,25 @@ const Index = () => {
         </div>
       </header>
 
-      {/* Hero Section - Two Column Layout */}
+      {/* Hero Section - Single Column Layout */}
       <section className="pt-12 pb-20 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto">
-          <div className="grid lg:grid-cols-2 gap-12 items-center min-h-[80vh]">
+          <div className="min-h-[80vh] flex items-center">
             
-            {/* Left Column - Text Content */}
-            <div className="space-y-8 lg:pr-8">
+            {/* Text Content - Left Aligned */}
+            <div className="space-y-8 max-w-2xl">
               <div className="space-y-6">
                 <h1 className="text-5xl lg:text-6xl xl:text-7xl font-bold leading-tight">
-                  <span className="text-dark-text">Extraordinary</span>
+                  <span className="text-foreground">Extraordinary</span>
                   <br />
                   <span className="bg-gradient-hero bg-clip-text text-transparent">
                     Campus Events,
                   </span>
                   <br />
-                  <span className="text-dark-text">Every Day.</span>
+                  <span className="text-foreground">Every Day.</span>
                 </h1>
                 
-                <p className="text-xl text-dark-text-secondary leading-relaxed max-w-lg">
+                <p className="text-xl text-muted-foreground leading-relaxed max-w-lg">
                   Plan, manage, and discover unforgettable events. Connect students and colleges seamlessly on one centralized platform.
                 </p>
               </div>
@@ -88,41 +86,9 @@ const Index = () => {
                     Explore Events
                   </Button>
                 </Link>
-                <Button size="lg" variant="outline" className="text-lg px-8 py-4 w-full sm:w-auto border-dark-text-secondary text-dark-text-secondary hover:bg-white/10">
+                <Button size="lg" variant="outline" className="text-lg px-8 py-4 w-full sm:w-auto">
                   Request a Demo
                 </Button>
-              </div>
-            </div>
-
-            {/* Right Column - Visual Content */}
-            <div className="relative">
-              <div className="bg-hero-accent rounded-3xl p-8 relative overflow-hidden shadow-2xl">
-                <img 
-                  src={heroStudentsImage} 
-                  alt="Students engaged in campus events" 
-                  className="w-full h-[500px] object-cover rounded-xl"
-                />
-                
-                {/* Overlay UI Elements */}
-                <div className="absolute top-12 left-12">
-                  <Badge className="bg-red-500 text-white px-3 py-1 animate-pulse">
-                    LIVE
-                  </Badge>
-                </div>
-                
-                <div className="absolute bottom-12 right-12 bg-white/95 backdrop-blur-sm rounded-lg p-4 shadow-lg max-w-xs">
-                  <div className="flex items-center space-x-3">
-                    <div className="w-8 h-8 bg-gradient-primary rounded-full flex-shrink-0"></div>
-                    <div className="flex-1 min-w-0">
-                      <p className="text-sm font-medium text-gray-900 truncate">
-                        Sarah M.
-                      </p>
-                      <p className="text-xs text-gray-600">
-                        "Amazing hackathon experience! 🚀"
-                      </p>
-                    </div>
-                  </div>
-                </div>
               </div>
             </div>
           </div>
@@ -130,13 +96,13 @@ const Index = () => {
       </section>
 
       {/* Features Section */}
-      <section className="py-20 bg-dark-surface/50 backdrop-blur-sm">
+      <section className="py-20 bg-muted/50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold text-dark-text mb-4">
+            <h2 className="text-4xl font-bold text-foreground mb-4">
               Everything You Need for Campus Events
             </h2>
-            <p className="text-xl text-dark-text-secondary max-w-2xl mx-auto">
+            <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
               Streamlined event management and discovery for the modern campus
             </p>
           </div>
@@ -148,10 +114,10 @@ const Index = () => {
               { icon: "🏆", title: "Competitions", desc: "Participate in hackathons, contests, and challenges" },
               { icon: "🏫", title: "Campus Wide", desc: "Events from all departments and organizations" }
             ].map((feature, index) => (
-              <div key={index} className="text-center p-6 bg-dark-surface/80 rounded-xl backdrop-blur-sm border border-white/10 hover:border-primary/30 transition-colors">
+              <div key={index} className="text-center p-6 bg-card rounded-xl border hover:shadow-md transition-all">
                 <div className="text-4xl mb-4">{feature.icon}</div>
-                <h3 className="text-xl font-semibold mb-2 text-dark-text">{feature.title}</h3>
-                <p className="text-dark-text-secondary">{feature.desc}</p>
+                <h3 className="text-xl font-semibold mb-2 text-foreground">{feature.title}</h3>
+                <p className="text-muted-foreground">{feature.desc}</p>
               </div>
             ))}
           </div>
@@ -160,7 +126,7 @@ const Index = () => {
 
       {/* CTA Section */}
       <section className="py-20 bg-gradient-hero">
-        <div className="max-w-4xl mx-auto text-center px-4 sm:px-6 lg:px-8">
+        <div className="max-4xl mx-auto text-center px-4 sm:px-6 lg:px-8">
           <h2 className="text-4xl font-bold text-white mb-4">
             Ready to Get Started?
           </h2>
@@ -168,7 +134,7 @@ const Index = () => {
             Join thousands of students already using CampusEventHub to discover and manage amazing campus experiences.
           </p>
           <Link to="/register">
-            <Button size="lg" variant="outline" className="bg-white text-primary hover:bg-white/90 text-lg px-8 py-4">
+            <Button size="lg" className="bg-white text-primary hover:bg-white/90 text-lg px-8 py-4">
               Create Your Account
             </Button>
           </Link>

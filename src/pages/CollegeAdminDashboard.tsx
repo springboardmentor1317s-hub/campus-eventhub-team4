@@ -37,10 +37,10 @@ const CollegeAdminDashboard = () => {
           </Button>
         </div>
 
-        {/* Your Published Events Section */}
+        {/* Your Events Overview Section */}
         <Card>
           <CardHeader>
-            <CardTitle>Your Published Events</CardTitle>
+            <CardTitle>Your Events Overview</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-center py-12">
@@ -49,8 +49,8 @@ const CollegeAdminDashboard = () => {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M8 7V3a1 1 0 011-1h6a1 1 0 011 1v4m-8 0h8m-8 0V19a2 2 0 002 2h4a2 2 0 002-2V7" />
                 </svg>
               </div>
-              <h3 className="text-lg font-medium text-foreground mb-2">No active events</h3>
-              <p className="text-muted-foreground">You have no active events.</p>
+              <h3 className="text-lg font-medium text-foreground mb-2">No events created</h3>
+              <p className="text-muted-foreground">Get started by creating your first event!</p>
             </div>
           </CardContent>
         </Card>
