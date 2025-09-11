@@ -96,11 +96,6 @@ const Signup = () => {
                 selectedRole={selectedRole}
                 setSelectedRole={setSelectedRole}
               />
-              <RoleButton
-                label="SuperAdmin"
-                selectedRole={selectedRole}
-                setSelectedRole={setSelectedRole}
-              />
             </div>
           </div>
 
