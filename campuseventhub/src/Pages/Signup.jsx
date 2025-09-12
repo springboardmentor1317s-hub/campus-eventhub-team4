@@ -1,6 +1,7 @@
-import React, { useState } from "react";
-import { User, Mail, Lock, GraduationCap } from "lucide-react";
+import React from "react";
+import { User, Mail, Lock, GraduationCap, ChevronDown } from "lucide-react";
 import { Link } from "react-router-dom";
+
 // Reusable InputField with optional icon
 const InputField = ({ id, label, type, placeholder, Icon }) => (
   <div className="flex flex-col text-sm mt-3">
@@ -24,28 +25,7 @@ const InputField = ({ id, label, type, placeholder, Icon }) => (
   </div>
 );
 
-const RoleButton = ({ label, selectedRole, setSelectedRole }) => {
-  const isSelected = selectedRole === label;
-
-  return (
-    <button
-      type="button"
-      onClick={() => setSelectedRole(label)}
-      className={`flex-1 text-sm font-semibold rounded-md p-3 transition-colors duration-200
-        ${
-          isSelected
-            ? "bg-primary text-white"
-            : "border border-primary text-primary bg-white"
-        }`}
-    >
-      {label}
-    </button>
-  );
-};
-
 const Signup = () => {
-  const [selectedRole, setSelectedRole] = useState("Student"); // Default role
-
   return (
     <section className="min-h-screen py-15 flex flex-col justify-center items-center bg-gradient-to-b from-blue-100 to-white">
       <h1 className="text-4xl font-bold text-primary">Create Account</h1>
@@ -82,19 +62,25 @@ const Signup = () => {
             Icon={GraduationCap}
           />
 
-          {/* Role Selection */}
+          {/* Role Selection Dropdown with custom Lucide arrow */}
           <div className="flex flex-col text-sm mt-3">
-            <label>Role</label>
-            <div className="flex mt-2 gap-2">
-              <RoleButton
-                label="Student"
-                selectedRole={selectedRole}
-                setSelectedRole={setSelectedRole}
-              />
-              <RoleButton
-                label="Admin"
-                selectedRole={selectedRole}
-                setSelectedRole={setSelectedRole}
+            <label htmlFor="role">Role</label>
+
+            <div className="relative mt-2">
+              <select
+                id="role"
+                name="role"
+                defaultValue="Student"
+                className="w-full p-3 pr-10 rounded-md bg-gray-200/40 outline-none appearance-none"
+              >
+                <option value="Student">Student</option>
+                <option value="Admin">Admin</option>
+              </select>
+
+              {/* Lucide ChevronDown icon */}
+              <ChevronDown
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 pointer-events-none"
+                size={20}
               />
             </div>
           </div>
