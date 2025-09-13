@@ -1,57 +1,75 @@
 const User = require('../models/User');
 const jwt = require('jsonwebtoken');
 
-// Signup (Create Account)
+const normalizeAccountType = (value) => {
+  if (!value) return '';
+  const v = value.toString().toLowerCase();
+  if (v.includes('admin')) return 'college_admin';
+  return 'student';
+};
+
 const signup = async (req, res) => {
   const { fullName, email, college, accountType, password } = req.body;
-
   try {
-    // Check if user exists
-    let user = await User.findOne({ email });
-    if (user) {
-      return res.status(400).json({ message: 'User already exists' });
+    // Basic validation
+    if (!fullName || !email || !college || !accountType || !password) {
+      return res.status(400).json({ message: 'All fields are required' });
     }
 
-    // Create new user
-    user = new User({ fullName, email, college, accountType, password });
+    const normalizedAccountType = normalizeAccountType(accountType);
+
+    // Check if user exists
+    let user = await User.findOne({ email });
+    if (user) return res.status(400).json({ message: 'User already exists' });
+
+    // Create & save user (password will be hashed by pre('save'))
+    user = new User({
+      fullName, email, college,
+      accountType: normalizedAccountType,
+      password
+    });
     await user.save();
 
-    // Generate JWT token
+    // Generate token
     const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
 
-    res.status(201).json({ token, user: { id: user._id, fullName, email, accountType } });
+    res.status(201).json({
+      token,
+      user: { id: user._id, fullName: user.fullName, email: user.email, accountType: user.accountType }
+    });
   } catch (error) {
-    res.status(500).json({ message: 'Server error' });
+    console.error('Signup Error Details:', error);
+    res.status(500).json({ message: 'Server error', error: error.message });
   }
 };
 
-// Signin (Login)
 const signin = async (req, res) => {
-  const { email, password, accountType } = req.body;  // Account type for verification
-
+  const { email, password, accountType } = req.body;
   try {
-    const user = await User.findOne({ email });
-    if (!user) {
-      return res.status(400).json({ message: 'Invalid credentials' });
+    if (!email || !password || !accountType) {
+      return res.status(400).json({ message: 'All fields are required' });
     }
 
-    // Check password
+    const user = await User.findOne({ email }).select('+password');
+    if (!user) return res.status(400).json({ message: 'Invalid credentials' });
+
     const isMatch = await user.matchPassword(password);
-    if (!isMatch) {
-      return res.status(400).json({ message: 'Invalid credentials' });
-    }
+    if (!isMatch) return res.status(400).json({ message: 'Invalid credentials' });
 
-    // Optional: Verify account type matches
-    if (user.accountType !== accountType) {
+    const normalizedAccountType = normalizeAccountType(accountType);
+    if (user.accountType !== normalizedAccountType) {
       return res.status(400).json({ message: 'Account type mismatch' });
     }
 
-    // Generate JWT token
     const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
 
-    res.json({ token, user: { id: user._id, fullName: user.fullName, email, accountType } });
+    res.json({
+      token,
+      user: { id: user._id, fullName: user.fullName, email: user.email, accountType: user.accountType }
+    });
   } catch (error) {
-    res.status(500).json({ message: 'Server error' });
+    console.error('Signin Error Details:', error);
+    res.status(500).json({ message: 'Server error', error: error.message });
   }
 };
 
