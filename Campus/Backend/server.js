@@ -1,9 +1,16 @@
-const express = require('express');
-const mongoose = require('mongoose');
-const cors = require('cors');
-const dotenv = require('dotenv');
+const express = require("express");
+const mongoose = require("mongoose");
+const cors = require("cors");
+const dotenv = require("dotenv");
 
 dotenv.config();
+
+
+const eventRoutes = require("./routes/eventRoutes");
+const registrationRoutes = require("./routes/registrationRoutes");
+const feedbackRoutes = require("./routes/feedbackRoutes");
+const adminLogRoutes = require("./routes/adminLogRoutes");
+const authRoutes = require("./routes/auth");
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -12,18 +19,30 @@ const PORT = process.env.PORT || 5000;
 app.use(cors());
 app.use(express.json());
 
-// Connect to MongoDB
-mongoose.connect(process.env.MONGODB_URI)
-  .then(() => console.log('MongoDB connected'))
-  .catch(err => console.error('MongoDB connection error:', err));
+// MongoDB Connection Function
+const connectDB = async () => {
+  try {
+    const conn = await mongoose.connect(process.env.MONGODB_URI);
+    console.log(`MongoDB Connected: ${conn.connection.host}`);
+  } catch (error) {
+    console.error("MongoDB connection error:", error.message);
+    process.exit(1); // Exit process if DB connection fails
+  }
+};
 
-// Routes (we'll add these later)
-app.use('/api/auth', require('./routes/auth'));
+// Routes
+app.use("/api/auth", authRoutes);
+app.use("/api/events", eventRoutes);
+app.use("/api/registrations", registrationRoutes);
+app.use("/api/feedbacks", feedbackRoutes);
+app.use("/api/admin-logs", adminLogRoutes);
 
-app.listen(PORT, () => {
+app.get("/", (req, res) => {
+  res.send("Campus EventHub API is running");
+});
+
+// Start Server
+app.listen(PORT, async () => {
+  await connectDB();
   console.log(`Server running on port ${PORT}`);
 });
-app.get('/', (req, res) => {
-  res.send('Campus EventHub API is running');
-});
-
