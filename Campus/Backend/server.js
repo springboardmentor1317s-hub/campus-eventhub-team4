@@ -16,7 +16,10 @@ const app = express();
 const PORT = process.env.PORT || 5000;
 
 // Middleware
-app.use(cors());
+app.use(cors({
+  origin: "http://localhost:5173",  // explicitly allow frontend
+  credentials: true                 // allow cookies/headers
+}));
 app.use(express.json());
 
 // MongoDB Connection Function
@@ -35,7 +38,7 @@ app.use("/api/auth", authRoutes);
 app.use("/api/events", eventRoutes);
 app.use("/api/registrations", registrationRoutes);
 app.use("/api/feedbacks", feedbackRoutes);
-app.use("/api/admin-logs", adminLogRoutes);
+app.use("/api/adminlogs", adminLogRoutes);
 
 app.get("/", (req, res) => {
   res.send("Campus EventHub API is running");

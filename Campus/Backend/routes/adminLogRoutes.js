@@ -1,9 +1,13 @@
 const express = require("express");
-const { getLogs } = require("../controllers/adminLogController");
-const { protect, authorizeRoles } = require("../middleware/authMiddleware");
+const { listAdminLogs, createAdminLog } = require("../controllers/adminLogController");
+const { protect } = require("../middleware/authMiddleware");
 
 const router = express.Router();
 
-router.get("/", protect, authorizeRoles("super_admin"), getLogs);
+// GET all logs
+router.get("/", protect, listAdminLogs);
+
+// POST new log (admin action)
+router.post("/", protect, createAdminLog);
 
 module.exports = router;

@@ -1,10 +1,22 @@
 const express = require("express");
-const { createEvent, getEvents } = require("../controllers/eventController");
-const { protect, authorizeRoles } = require("../middleware/authMiddleware");
+const {
+  createEvent,
+  getEvents,
+  getEventById,
+  updateEvent,
+  deleteEvent,
+} = require("../controllers/eventController");
+const { protect } = require("../middleware/authMiddleware");
 
 const router = express.Router();
 
-router.post("/", protect, authorizeRoles("college_admin", "super_admin"), createEvent);
+// Public Routes
 router.get("/", getEvents);
+router.get("/:id", getEventById);
+
+// Protected Routes (Admin only)
+router.post("/", protect, createEvent);
+router.put("/:id", protect, updateEvent);
+router.delete("/:id", protect, deleteEvent);
 
 module.exports = router;
