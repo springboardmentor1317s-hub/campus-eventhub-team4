@@ -1,10 +1,11 @@
 const express = require('express');
-const { signup, signin } = require('../controllers/authController');
+const { signup, signin, profile, listUsers } = require('../controllers/authController');
+const { protect } = require('../middleware/authMiddleware');
 const router = express.Router();
 
 router.post('/signup', signup);
 router.post('/signin', signin);
-
-// remove test routes in production
+router.get('/profile', protect, profile);
+router.get('/', listUsers);  // <-- NEW route
 
 module.exports = router;
