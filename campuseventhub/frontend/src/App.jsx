@@ -2,9 +2,13 @@ import React from "react";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import Welcome from "./pages/Welcome";
-import Userdash from "./pages/userdash";
+import Userdash from "./pages/Userdash";
+import Admindash from "./pages/Admindash";
+import Superadmindash from "./pages/Superadmindash";
+
 import { createBrowserRouter, Router, RouterProvider } from "react-router-dom";
 import ProtectedRoute from "./components/ProtectedRoute";
+import { AuthProvider } from "./context/AuthContext";
 const App = () => {
   const router = createBrowserRouter([
     {
@@ -35,8 +39,28 @@ const App = () => {
       path: "/userdash",
       element: (
         <>
-          <ProtectedRoute>
+          <ProtectedRoute requiredRole="student">
             <Userdash />
+          </ProtectedRoute>
+        </>
+      ),
+    },
+    {
+      path: "/admindash",
+      element: (
+        <>
+          <ProtectedRoute requiredRole="college_admin">
+            <Admindash />
+          </ProtectedRoute>
+        </>
+      ),
+    },
+    {
+      path: "/superadmindash",
+      element: (
+        <>
+          <ProtectedRoute requiredRole="superadmin">
+            <Superadmindash />
           </ProtectedRoute>
         </>
       ),
@@ -44,7 +68,9 @@ const App = () => {
   ]);
   return (
     <>
-      <RouterProvider router={router} />
+      <AuthProvider>
+        <RouterProvider router={router} />
+      </AuthProvider>
     </>
   );
 };

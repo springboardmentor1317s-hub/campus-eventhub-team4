@@ -1,10 +1,10 @@
-import React, { useState, useContext } from "react";
+import React, { useState } from "react";
 import { Mail, Lock, ChevronDown } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
-import { AuthContext } from "../context/AuthContext"; // ✅ import context
+import { useAuth } from "../context/AuthContext";
 
-// Reusable input field
+// Reusable Input Field
 const InputField = ({
   id,
   name,
@@ -34,6 +34,7 @@ const InputField = ({
         className={`w-full bg-gray-200/40 p-3 rounded-md outline-none ${
           Icon ? "pl-10" : ""
         }`}
+        required
       />
     </div>
   </div>
@@ -41,13 +42,14 @@ const InputField = ({
 
 const Login = () => {
   const navigate = useNavigate();
-  const { login } = useContext(AuthContext); // ✅ use context
+  const { login } = useAuth();
 
   const [form, setForm] = useState({
     email: "",
     password: "",
-    role: "student",
+    role: "student", // default role
   });
+
   const [error, setError] = useState("");
 
   const handleChange = (e) => {
@@ -62,20 +64,17 @@ const Login = () => {
       const res = await axios.post("http://localhost:5000/api/auth/signin", {
         email: form.email,
         password: form.password,
-        accountType: form.role.toLowerCase(), // ✅ match backend
+        accountType: form.role, // must match DB value
       });
 
-      // ✅ Save token in context + localStorage
-      login(res.data.token);
+      // Save token + user in AuthContext
+      login(res.data.token, res.data.user);
 
-      // ✅ Navigate based on role
-      if (form.role.toLowerCase() === "student") {
-        navigate("/userdash");
-      } else if (form.role.toLowerCase() === "admin") {
-        navigate("/admindash");
-      } else if (form.role.toLowerCase() === "superadmin") {
-        navigate("/superadmin");
-      }
+      // Redirect by role
+      const role = res.data.user.accountType.toLowerCase();
+      if (role === "student") navigate("/userdash");
+      else if (role === "college_admin") navigate("/admindash");
+      else if (role === "superadmin") navigate("/superadmindash");
     } catch (err) {
       setError(err.response?.data?.message || "Login failed");
     }
@@ -100,7 +99,6 @@ const Login = () => {
             value={form.email}
             onChange={handleChange}
           />
-
           <InputField
             id="password"
             name="password"
@@ -124,7 +122,7 @@ const Login = () => {
                 className="w-full p-3 pr-10 rounded-md bg-gray-200/40 outline-none appearance-none"
               >
                 <option value="student">Student</option>
-                <option value="admin">Admin</option>
+                <option value="college_admin">Admin</option>
                 <option value="superadmin">Super Admin</option>
               </select>
 
@@ -135,11 +133,12 @@ const Login = () => {
             </div>
           </div>
 
-          {/* forgot your password */}
+          {/* Forgot Password */}
           <p className="text-primary text-sm text-center mt-3">
             <a href="#">Forgot your password?</a>
           </p>
 
+          {/* Error */}
           {error && (
             <p className="text-red-500 text-sm text-center mt-2">{error}</p>
           )}

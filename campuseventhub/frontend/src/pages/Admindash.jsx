@@ -2,7 +2,7 @@ import React from "react";
 import { useAuth } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 
-const Userdash = () => {
+const Admindash = () => {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
 
@@ -28,4 +28,4 @@ const Userdash = () => {
   );
 };
 
-export default Userdash;
+export default Admindash;
