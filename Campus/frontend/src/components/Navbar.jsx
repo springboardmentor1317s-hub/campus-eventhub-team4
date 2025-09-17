@@ -19,14 +19,14 @@ function Navbar() {
   const isActive = (path) => location.pathname === path;
 
   return (
-    <nav className="navbar navbar-expand-lg navbar-dark bg-dark shadow-sm sticky-top">
+    <nav className="navbar navbar-expand-lg navbar-light bg-white shadow-sm sticky-top border-bottom">
       <div className="container">
         {/* Brand */}
-        <Link className="navbar-brand fw-bold" to="/">
-          <i className="fa-solid fa-calendar-days me-2"></i>CampusEventHub
+        <Link className="navbar-brand fw-bold text-primary" to="/">
+          <i className="fa-solid fa-calendar-days me-2"></i> CampusEventHub
         </Link>
 
-        {/* Toggler (for mobile) */}
+        {/* Toggler (mobile) */}
         <button
           className="navbar-toggler"
           type="button"
@@ -41,15 +41,15 @@ function Navbar() {
 
         {/* Navbar Content */}
         <div className="collapse navbar-collapse" id="navbarContent">
-          {/* Centered Nav Links */}
+          {/* Centered Links (Only if logged in) */}
           {token && (
             <ul className="navbar-nav mx-auto mb-2 mb-lg-0 text-center">
               <li className="nav-item mx-2 my-1">
                 <Link
-                  className={`nav-link btn ${
+                  className={`btn ${
                     isActive("/events")
                       ? "btn-primary text-white"
-                      : "btn-outline-light"
+                      : "btn-outline-primary"
                   }`}
                   to="/events"
                 >
@@ -58,10 +58,10 @@ function Navbar() {
               </li>
               <li className="nav-item mx-2 my-1">
                 <Link
-                  className={`nav-link btn ${
+                  className={`btn ${
                     isActive("/user-dashboard") || isActive("/admin-dashboard")
                       ? "btn-primary text-white"
-                      : "btn-outline-light"
+                      : "btn-outline-primary"
                   }`}
                   to={
                     user?.accountType === "Student"
@@ -75,18 +75,18 @@ function Navbar() {
             </ul>
           )}
 
-          {/* Right Side User Info */}
+          {/* Right Side (User Info if logged in) */}
           {token && (
-            <div className="d-flex align-items-center flex-column flex-lg-row text-center ms-lg-auto mt-3 mt-lg-0">
+            <div className="d-flex align-items-center flex-column flex-lg-row ms-lg-auto mt-3 mt-lg-0 text-center">
               <div className="d-flex align-items-center mb-2 mb-lg-0">
-                <i className="fa fa-user-circle fa-2x text-light me-2"></i>
-                <div className="d-flex flex-column text-light">
+                <i className="fa fa-user-circle fa-2x text-primary me-2"></i>
+                <div className="d-flex flex-column text-dark">
                   <span className="fw-bold">{user?.fullName}</span>
-                  <small className="">{user?.accountType}</small>
+                  <small className="text-muted">{user?.accountType}</small>
                 </div>
               </div>
               <button
-                className="btn btn-outline-light ms-lg-3"
+                className="btn btn-outline-danger ms-lg-3 mt-2 mt-lg-0"
                 onClick={handleLogout}
               >
                 <i className="fa fa-sign-out-alt me-1"></i> Logout
@@ -98,12 +98,12 @@ function Navbar() {
           {!token && (
             <div className="d-flex flex-column flex-lg-row ms-lg-auto mt-3 mt-lg-0 text-center">
               <Link
-                className="btn btn-outline-light me-lg-2 mb-2 mb-lg-0"
+                className="btn btn-outline-primary me-lg-2 mb-2 mb-lg-0"
                 to="/login"
               >
                 <i className="fa fa-sign-in-alt me-1"></i> Login
               </Link>
-              <Link className="btn btn-outline-light mb-2 mb-lg-0" to="/register">
+              <Link className="btn btn-primary mb-2 mb-lg-0" to="/register">
                 <i className="fa fa-user-plus me-1"></i> Register
               </Link>
             </div>
@@ -111,14 +111,21 @@ function Navbar() {
         </div>
       </div>
 
-      {/* Hover + Mobile Styling */}
+      {/* Extra Styling */}
       <style jsx>{`
-        .nav-link {
-          transition: all 0.2s ease;
+        .navbar-brand {
+          font-size: 1.25rem;
+          transition: color 0.2s ease;
         }
-        .nav-link:hover {
-          transform: scale(1.05);
+        .navbar-brand:hover {
           color: #0d6efd !important;
+        }
+        .btn {
+          transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        .btn:hover {
+          transform: translateY(-2px);
+          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
         }
         @media (max-width: 991px) {
           .navbar-nav {
