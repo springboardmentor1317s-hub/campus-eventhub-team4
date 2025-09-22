@@ -11,7 +11,7 @@ const { protect } = require("../middleware/authMiddleware");
 const router = express.Router();
 
 // Public Routes
-router.get("/", getEvents);
+router.get("/",protect, getEvents);
 router.get("/:id", getEventById);
 
 // Protected Routes (Admin only)

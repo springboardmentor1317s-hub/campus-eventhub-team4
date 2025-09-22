@@ -8,6 +8,9 @@ function Events() {
   const [category, setCategory] = useState("");
   const [title, setTitle] = useState("");
   const [location, setLocation] = useState("");
+  const [college, setCollege] = useState("");
+  const [startDate, setStartDate] = useState("");
+  const [endDate, setEndDate] = useState("");
   const [loading, setLoading] = useState(false);
 
   const fetchEvents = async (filters = {}) => {
@@ -22,20 +25,24 @@ function Events() {
     }
   };
 
-  // Real-time filtering effect
   useEffect(() => {
     const filters = {};
     if (category) filters.category = category;
     if (title) filters.title = title;
     if (location) filters.location = location;
+    if (college) filters.college = college;
+    if (startDate) filters.start_date = startDate;
+    if (endDate) filters.end_date = endDate;
 
     fetchEvents(filters);
-  }, [category, title, location]);
+  }, [category, title, location, college, startDate, endDate]);
 
   const handleReset = () => {
     setCategory("");
     setTitle("");
     setLocation("");
+    setStartDate("");
+    setEndDate("");
   };
 
   return (
@@ -46,56 +53,76 @@ function Events() {
 
       {/* Filters */}
       <div className="card shadow-sm p-3 mb-4">
-  <div className="row g-2 align-items-end">
-    <div className="col-md-3">
-      <label className="form-label">Category</label>
-      <select
-        className="form-select"
-        value={category}
-        onChange={(e) => setCategory(e.target.value)}
-      >
-        <option value="">All</option>
-        <option value="sports">Sports</option>
-        <option value="hackathon">Hackathon</option>
-        <option value="cultural">Cultural</option>
-        <option value="workshop">Workshop</option>
-        <option value="other">Other</option>
-      </select>
-    </div>
+        <div className="row g-2 align-items-end">
+          <div className="col-6 col-sm-4 col-md-2">
+            <label className="form-label">Category</label>
+            <select
+              className="form-select"
+              value={category}
+              onChange={(e) => setCategory(e.target.value)}
+            >
+              <option value="">All</option>
+              <option value="sports">Sports</option>
+              <option value="hackathon">Hackathon</option>
+              <option value="cultural">Cultural</option>
+              <option value="workshop">Workshop</option>
+              <option value="other">Other</option>
+            </select>
+          </div>
 
-    <div className="col-md-3">
-      <label className="form-label">Title</label>
-      <input
-        type="text"
-        className="form-control"
-        placeholder="Search by title"
-        value={title}
-        onChange={(e) => setTitle(e.target.value)}
-      />
-    </div>
+          <div className="col-6 col-sm-4 col-md-2">
+            <label className="form-label">Title</label>
+            <input
+              type="text"
+              className="form-control"
+              placeholder="Search by title"
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+            />
+          </div>
 
-    <div className="col-md-3">
-      <label className="form-label">Location</label>
-      <input
-        type="text"
-        className="form-control"
-        placeholder="Search by location"
-        value={location}
-        onChange={(e) => setLocation(e.target.value)}
-      />
-    </div>
+          <div className="col-6 col-sm-4 col-md-2">
+            <label className="form-label">Location</label>
+            <input
+              type="text"
+              className="form-control"
+              placeholder="Search by location"
+              value={location}
+              onChange={(e) => setLocation(e.target.value)}
+            />
+          </div>
 
-    <div className="col-md-3 d-flex justify-content-start">
-      <button
-        className="btn btn-outline-secondary w-100"
-        onClick={handleReset}
-      >
-        <i className="fa fa-sync-alt me-1"></i> Reset
-      </button>
-    </div>
-  </div>
-</div>
+          <div className="col-6 col-sm-4 col-md-2">
+            <label className="form-label">Start Date</label>
+            <input
+              type="date"
+              className="form-control"
+              value={startDate}
+              onChange={(e) => setStartDate(e.target.value)}
+            />
+          </div>
 
+          <div className="col-6 col-sm-4 col-md-2">
+            <label className="form-label">End Date</label>
+            <input
+              type="date"
+              className="form-control"
+              value={endDate}
+              onChange={(e) => setEndDate(e.target.value)}
+            />
+          </div>
+
+          {/* Reset Button */}
+          <div className="col-12 col-md-2 d-flex align-items-end mt-2 mt-md-0">
+            <button
+              className="btn btn-outline-secondary w-100"
+              onClick={handleReset}
+            >
+              <i className="fa fa-sync-alt me-1"></i> Reset
+            </button>
+          </div>
+        </div>
+      </div>
 
       {/* Events List */}
       {loading ? (
@@ -110,7 +137,7 @@ function Events() {
       ) : (
         <div className="row">
           {events.map((event) => (
-            <div key={event._id} className="col-md-4 mb-4">
+            <div key={event._id} className="col-12 col-sm-6 col-md-4 mb-4">
               <div className="card h-100 shadow-sm">
                 {event.banner && (
                   <img
@@ -132,7 +159,8 @@ function Events() {
                     {event.location}
                   </p>
                   <p className="text-muted">
-                    {new Date(event.start_date).toDateString()} - {new Date(event.end_date).toDateString()}
+                    {new Date(event.start_date).toDateString()} -{" "}
+                    {new Date(event.end_date).toDateString()}
                   </p>
                   <Link
                     to={`/events/${event._id}`}

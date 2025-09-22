@@ -30,7 +30,8 @@ function AdminDashboard() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const resEvents = await api.get("/events");
+        const resEvents = await api.get("/events?college=me");
+
         const resUsers = await api.get("/auth/");
         const resRegs = await api.get("/registrations");
         const resLogs = await api.get("/adminlogs/");

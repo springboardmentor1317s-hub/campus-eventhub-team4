@@ -111,18 +111,23 @@ const updateEvent = async (req, res) => {
 const deleteEvent = async (req, res) => {
   try {
     const event = await Event.findById(req.params.id);
-    if (!event) return res.status(404).json({ message: "Event not found" });
+    if (!event) {
+      return res.status(404).json({ message: "Event not found" });
+    }
 
+    // Authorization check
     if (event.college_id.toString() !== req.user._id.toString()) {
       return res.status(403).json({ message: "Not authorized to delete this event" });
     }
 
-    await event.remove();
+    await Event.findByIdAndDelete(req.params.id);
     res.json({ message: "Event deleted successfully" });
   } catch (err) {
+    console.error(err);
     res.status(500).json({ message: "Failed to delete event" });
   }
 };
+
 
 module.exports = {
   createEvent,
