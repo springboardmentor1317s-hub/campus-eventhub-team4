@@ -18,7 +18,9 @@ const addFeedback = async (req, res) => {
 const getFeedbacks = async (req, res) => {
   const { eventId } = req.query;
 
-  const feedbacks = await Feedback.find({ event_id: eventId }).populate("user_id", "name college");
+  const feedbacks = await Feedback.find({ event_id: eventId })
+    .populate("user_id", "fullName college"); // ✅ fixed
+
   res.json(feedbacks);
 };
 

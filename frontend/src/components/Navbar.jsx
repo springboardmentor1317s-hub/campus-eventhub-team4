@@ -112,7 +112,7 @@ function Navbar() {
       </div>
 
       {/* Extra Styling */}
-      <style jsx>{`
+      <style>{`
         .navbar-brand {
           font-size: 1.25rem;
           transition: color 0.2s ease;
