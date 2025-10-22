@@ -1,0 +1,273 @@
+/* Page Background */
+.register-page {
+  min-height: 100vh;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  background: 
+    linear-gradient(rgba(255, 255, 255, 0.35), rgba(255, 255, 255, 0.35)),
+    url("../assets/bg.jpg") no-repeat center center;
+  background-size: cover;
+  background-attachment: fixed;
+  padding: 20px;
+  overflow: hidden;
+}
+
+/* Registration Card - Clean White Block */
+.register-card {
+  background: #fff;
+  border-radius: 18px;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  box-shadow: 0px 6px 24px rgba(0, 0, 0, 0.15);
+
+  padding: 28px;
+  width: 100%;
+  max-width: 400px;
+  text-align: center;
+  color: #000;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+
+  animation: fadeInUp 0.8s ease;
+}
+
+/* Headings */
+.register-card h2 {
+  font-size: 22px;
+  font-weight: bold;
+  color: #000;
+  margin-bottom: 10px;
+}
+
+.register-card p {
+  font-size: 13px;
+  color: #444;
+  margin-bottom: 18px;
+}
+
+/* Labels */
+.register-card label {
+  display: block;
+  font-weight: 500;
+  text-align: left;
+  margin: 6px 0 4px;
+  color: #000;
+  font-size: 13px;
+}
+
+/* Input Groups */
+.input-group {
+  margin-bottom: 14px;
+  width: 100%;
+}
+
+.input-icon {
+  display: flex;
+  align-items: center;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  padding: 8px 10px;
+  background: #f9f7f7;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.input-icon i {
+  margin-right: 8px;
+  color: #666;
+  min-width: 18px;
+  text-align: center;
+  font-size: 14px;
+}
+
+.input-icon input,
+.input-icon select {
+  border: none;
+  outline: none;
+  flex: 1;
+  font-size: 14px;
+  background: transparent;
+  padding: 6px 0;
+  color: #000;
+}
+
+.input-icon input::placeholder {
+  color: #999;
+}
+
+/* Select dropdown arrow */
+.input-icon select {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  background-image: url("data:image/svg+xml;utf8,<svg fill='black' height='14' viewBox='0 0 24 24' width='14' xmlns='http://www.w3.org/2000/svg'><path d='M7 10l5 5 5-5z'/></svg>");
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+  background-size: 14px;
+  padding-right: 28px;
+}
+
+/* Checkbox */
+.terms {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: #000;
+  margin: 6px 0 12px;
+}
+
+.terms input[type="checkbox"] {
+  width: 14px;
+  height: 14px;
+}
+
+.terms a {
+  color: #1976d2;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.terms a:hover {
+  text-decoration: underline;
+}
+
+/* Button */
+.register-btn {
+  background: linear-gradient(135deg, #1976d2, #4facfe);
+  color: white;
+  padding: 10px;
+  width: 100%;
+  border: none;
+  border-radius: 8px;
+  margin-top: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.register-btn:hover:enabled {
+  background: linear-gradient(135deg, #1565c0, #3f8efc);
+  transform: translateY(-2px);
+  box-shadow: 0px 4px 12px rgba(79, 172, 254, 0.5);
+}
+
+.register-btn:disabled {
+  background: #aaa;
+  cursor: not-allowed;
+}
+
+/* Already have an account link */
+.login-link {
+  margin-top: 12px;
+  font-size: 13px;
+  color: #000;
+}
+
+.login-link a {
+  color: #1976d2;
+  font-weight: bold;
+  text-decoration: none;
+}
+
+.login-link a:hover {
+  text-decoration: underline;
+}
+
+/* Fade In Animation */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+/* Input Groups */
+.input-group {
+  margin-bottom: 14px;
+  width: 100%;
+  display: flex;
+  justify-content: center; /* center align smaller inputs */
+}
+
+.input-icon {
+  display: flex;
+  align-items: center;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  padding: 8px 10px;
+  background: #f9f7f7;
+  width: 90%;         /* 🔹 reduce width (try 90% / 85% as you like) */
+  max-width: 320px;   /* 🔹 optional: fix max width */
+  box-sizing: border-box;
+}
+/* Registration Card - Clean White Block */
+.register-card {
+  background: #fff;
+  border-radius: 18px;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  box-shadow: 0px 6px 24px rgba(0, 0, 0, 0.15);
+
+  padding: 28px;
+  width: 100%;
+  max-width: 400px;
+  text-align: center;
+  color: #000;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+
+  animation: fadeInUp 0.8s ease;
+}
+
+/* Headings */
+.register-card h2 {
+  font-size: 24px;
+  font-weight: bold;
+  color: #1976d2;   /* 🔹 Blue heading */
+  margin-bottom: 12px;
+}
+
+.register-card p {
+  font-size: 13px;
+  color: #444;
+  margin-bottom: 18px;
+}
+
+/* Input Groups */
+.input-group {
+  margin-bottom: 14px;
+  width: 100%;
+  display: flex;
+  justify-content: center; /* center align smaller inputs */
+}
+
+.input-icon {
+  display: flex;
+  align-items: center;
+  border: 1px solid #1976d2;   /* 🔹 blue border */
+  border-radius: 6px;
+  padding: 8px 10px;
+  background: #f9f7f7;
+  width: 90%;         /* 🔹 narrower width */
+  max-width: 320px;   /* 🔹 fixed max width */
+  box-sizing: border-box;
+  transition: border 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* Focus effect */
+.input-icon input:focus,
+.input-icon select:focus {
+  outline: none;
+  border: 1px solid #1565c0;   /* darker blue on focus */
+  box-shadow: 0 0 6px rgba(25, 118, 210, 0.3);
+}
