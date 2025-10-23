@@ -20,17 +20,31 @@ function FeedbackSection({ eventId }) {
   const [avgRating, setAvgRating] = useState(0);
   const [sort, setSort] = useState("newest");
   const [loading, setLoading] = useState(true);
+  const [editingId, setEditingId] = useState(null);
+  const [editComment, setEditComment] = useState("");
+  const [editRating, setEditRating] = useState(0);
+  const [replyText, setReplyText] = useState({});
+  const [currentUser, setCurrentUser] = useState(null);
 
   useEffect(() => {
+    fetchProfile();
     fetchFeedbacks();
   }, [eventId]);
+
+  const fetchProfile = async () => {
+    try {
+      const res = await api.get("/auth/profile");
+      setCurrentUser(res.data);
+    } catch {
+      console.error("Failed to fetch profile");
+    }
+  };
 
   const fetchFeedbacks = async () => {
     setLoading(true);
     try {
       const res = await api.get(`/feedbacks?eventId=${eventId}`);
       setFeedbacks(res.data);
-
       const avg =
         res.data.length > 0
           ? res.data.reduce((sum, f) => sum + f.rating, 0) / res.data.length
@@ -60,7 +74,50 @@ function FeedbackSection({ eventId }) {
     }
   };
 
-  // Sorting feedbacks
+  const handleEdit = (fb) => {
+    setEditingId(fb._id);
+    setEditComment(fb.comments);
+    setEditRating(fb.rating);
+  };
+
+  const handleUpdate = async () => {
+    try {
+      await api.put(`/feedbacks/${editingId}`, {
+        rating: editRating,
+        comments: editComment,
+      });
+      toast.success("Feedback updated!");
+      setEditingId(null);
+      fetchFeedbacks();
+    } catch {
+      toast.error("Update failed");
+    }
+  };
+
+  const handleDelete = async (id) => {
+    if (!window.confirm("Are you sure you want to delete this feedback?")) return;
+    try {
+      await api.delete(`/feedbacks/${id}`);
+      toast.success("Feedback deleted!");
+      fetchFeedbacks();
+    } catch {
+      toast.error("Delete failed");
+    }
+  };
+
+  const handleReply = async (id) => {
+    if (!replyText[id]) return toast.error("Reply cannot be empty");
+    try {
+      await api.post(`/feedbacks/${id}/replies`, { comment: replyText[id] });
+      toast.success("Reply added!");
+      setReplyText({ ...replyText, [id]: "" });
+      fetchFeedbacks();
+    } catch {
+      toast.error("Failed to reply");
+    }
+  };
+
+  // Sorting logic
   const sortedFeedbacks = [...feedbacks].sort((a, b) => {
     if (sort === "highest") return b.rating - a.rating;
     if (sort === "lowest") return a.rating - b.rating;
@@ -69,7 +126,11 @@ function FeedbackSection({ eventId }) {
 
   const distribution = [5, 4, 3, 2, 1].map((star) => {
     const count = feedbacks.filter((f) => f.rating === star).length;
-    return { star, count, percent: feedbacks.length ? (count / feedbacks.length) * 100 : 0 };
+    return {
+      star,
+      count,
+      percent: feedbacks.length ? (count / feedbacks.length) * 100 : 0,
+    };
   });
 
   if (loading) return <p className="text-center text-muted">Loading feedbacks...</p>;
@@ -94,17 +155,15 @@ function FeedbackSection({ eventId }) {
           </div>
 
           {/* Rating distribution */}
-          <div>
-            {distribution.map((d) => (
-              <div key={d.star} className="d-flex align-items-center mb-1">
-                <span style={{ width: "40px" }}>{d.star}★</span>
-                <div className="progress flex-grow-1 me-2" style={{ height: "8px" }}>
-                  <div className="progress-bar bg-warning" style={{ width: `${d.percent}%` }} />
-                </div>
-                <span>{d.count}</span>
+          {distribution.map((d) => (
+            <div key={d.star} className="d-flex align-items-center mb-1">
+              <span style={{ width: "40px" }}>{d.star}★</span>
+              <div className="progress flex-grow-1 me-2" style={{ height: "8px" }}>
+                <div className="progress-bar bg-warning" style={{ width: `${d.percent}%` }} />
               </div>
-            ))}
-          </div>
+              <span>{d.count}</span>
+            </div>
+          ))}
         </div>
       ) : (
         <p className="text-muted">No reviews yet</p>
@@ -138,7 +197,11 @@ function FeedbackSection({ eventId }) {
       {feedbacks.length > 0 && (
         <div className="d-flex justify-content-between align-items-center mb-3">
           <h5>What others say</h5>
-          <select className="form-select w-auto" value={sort} onChange={(e) => setSort(e.target.value)}>
+          <select
+            className="form-select w-auto"
+            value={sort}
+            onChange={(e) => setSort(e.target.value)}
+          >
             <option value="newest">Newest</option>
             <option value="highest">Highest Rated</option>
             <option value="lowest">Lowest Rated</option>
@@ -157,6 +220,9 @@ function FeedbackSection({ eventId }) {
                   .join("")
                   .toUpperCase()
               : "U";
+
+            const isOwner = fb.user_id?._id === currentUser?._id;
+            const isAdmin = currentUser?.accountType === "College Admin";
 
             return (
               <div key={fb._id} className="col-lg-6 col-md-6 col-sm-12 mb-3">
@@ -183,10 +249,89 @@ function FeedbackSection({ eventId }) {
                       <small className="text-muted">{fb.user_id?.college}</small>
                     </div>
                   </div>
-                  <div className="text-warning mb-1 fs-3">
-                    {"★".repeat(fb.rating)}{"☆".repeat(5 - fb.rating)}
+
+                  {editingId === fb._id ? (
+                    <>
+                      <div className="mb-2">
+                        {[1, 2, 3, 4, 5].map((star) => (
+                          <FaStar
+                            key={star}
+                            onClick={() => setEditRating(star)}
+                            className={`me-1 cursor-pointer ${
+                              star <= editRating ? "text-warning" : "text-secondary"
+                            }`}
+                          />
+                        ))}
+                      </div>
+                      <textarea
+                        className="form-control mb-2"
+                        value={editComment}
+                        onChange={(e) => setEditComment(e.target.value)}
+                      />
+                      <button className="btn btn-success btn-sm me-2" onClick={handleUpdate}>
+                        Save
+                      </button>
+                      <button
+                        className="btn btn-secondary btn-sm"
+                        onClick={() => setEditingId(null)}
+                      >
+                        Cancel
+                      </button>
+                    </>
+                  ) : (
+                    <>
+                      <div className="text-warning mb-1 fs-3">
+                        {"★".repeat(fb.rating)}{"☆".repeat(5 - fb.rating)}
+                      </div>
+                      <p className="mb-2">{fb.comments}</p>
+
+                      {(isOwner || isAdmin) && (
+                        <div className="mb-2">
+                          {isOwner && (
+                            <button
+                              className="btn btn-outline-primary btn-sm me-2"
+                              onClick={() => handleEdit(fb)}
+                            >
+                              Edit
+                            </button>
+                          )}
+                          <button
+                            className="btn btn-outline-danger btn-sm"
+                            onClick={() => handleDelete(fb._id)}
+                          >
+                            Delete
+                          </button>
+                        </div>
+                      )}
+                    </>
+                  )}
+
+                  {/* ✅ Replies Section */}
+                  <div className="border-top pt-2 mt-2">
+                    {fb.replies?.length > 0 &&
+                      fb.replies.map((r, idx) => (
+                        <div key={idx} className="ms-3 mb-2">
+                          <strong>{r.user_id?.fullName || "Anonymous"}:</strong> {r.comment}
+                        </div>
+                      ))}
+                    <div className="input-group mt-2">
+                      <input
+                        type="text"
+                        className="form-control"
+                        placeholder="Write a reply..."
+                        value={replyText[fb._id] || ""}
+                        onChange={(e) =>
+                          setReplyText({ ...replyText, [fb._id]: e.target.value })
+                        }
+                      />
+                      <button
+                        className="btn btn-sm btn-outline-success"
+                        onClick={() => handleReply(fb._id)}
+                      >
+                        Reply
+                      </button>
+                    </div>
                   </div>
-                  <p className="mb-2">{fb.comments}</p>
                 </div>
               </div>
             );
@@ -313,7 +458,9 @@ function EventDetails() {
                   Organized by {event.college_id?.college || "College"}
                 </span>
               </div>
-              <p className="text-muted mb-4" style={{ lineHeight: "1.7" }}>{event.description}</p>
+              <p className="text-muted mb-4" style={{ lineHeight: "1.7" }}>
+                {event.description}
+              </p>
 
               <div className="mb-4">
                 <p className="mb-3 fs-5 d-flex align-items-center">
@@ -321,10 +468,12 @@ function EventDetails() {
                 </p>
                 <p className="mb-3 fs-5 d-flex align-items-center">
                   <FaCalendarAlt className="me-2 text-success fs-4" />
-                  {new Date(event.start_date).toDateString()} – {new Date(event.end_date).toDateString()}
+                  {new Date(event.start_date).toDateString()} –{" "}
+                  {new Date(event.end_date).toDateString()}
                 </p>
                 <p className="fs-5 d-flex align-items-center">
-                  <FaUser className="me-2 text-primary fs-4" /> {event.college_id?.college || "College"}
+                  <FaUser className="me-2 text-primary fs-4" />{" "}
+                  {event.college_id?.college || "College"}
                 </p>
               </div>
             </div>
@@ -335,20 +484,28 @@ function EventDetails() {
                 !registered ? (
                   <button
                     className="btn btn-success btn-lg w-100 py-3 fw-semibold shadow-sm"
-                    style={{ background: "linear-gradient(90deg, #28a745, #218838)", border: "none" }}
+                    style={{
+                      background: "linear-gradient(90deg, #28a745, #218838)",
+                      border: "none",
+                    }}
                     onClick={handleRegister}
                     disabled={actionLoading}
                   >
-                    <FaCheck className="me-2" /> {actionLoading ? "Registering..." : "Register Now"}
+                    <FaCheck className="me-2" />{" "}
+                    {actionLoading ? "Registering..." : "Register Now"}
                   </button>
                 ) : (
                   <button
                     className="btn btn-danger btn-lg w-100 py-3 fw-semibold shadow-sm"
-                    style={{ background: "linear-gradient(90deg, #dc3545, #c82333)", border: "none" }}
+                    style={{
+                      background: "linear-gradient(90deg, #dc3545, #c82333)",
+                      border: "none",
+                    }}
                     onClick={handleCancel}
                     disabled={actionLoading}
                   >
-                    <FaTimes className="me-2" /> {actionLoading ? "Cancelling..." : "Cancel Registration"}
+                    <FaTimes className="me-2" />{" "}
+                    {actionLoading ? "Cancelling..." : "Cancel Registration"}
                   </button>
                 )
               ) : (
