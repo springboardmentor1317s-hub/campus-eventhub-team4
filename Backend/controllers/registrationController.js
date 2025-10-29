@@ -1,6 +1,6 @@
 const Registration = require("../models/Registration");
 const AdminLog = require("../models/AdminLog");
-
+const mongoose = require("mongoose");
 // Student registers for event
 const registerForEvent = async (req, res) => {
   try {
@@ -39,21 +39,23 @@ const cancelRegistration = async (req, res) => {
   try {
     const { id } = req.params;
 
-    console.log("Attempting to delete registration ID:", id);
+    console.log("Attempting to cancel registration ID:", id);
     console.log("Requesting user:", req.user);
 
-    // Validate MongoDB ObjectId
-    if (!id.match(/^[0-9a-fA-F]{24}$/)) {
+    // Validate ObjectId
+    if (!mongoose.Types.ObjectId.isValid(id)) {
       return res.status(400).json({ message: "Invalid registration ID" });
     }
 
+    const userRole = req.user.role || req.user.accountType;
+
     let registration;
 
-    if (req.user.role === "admin") {
+    if (userRole === "College Admin") {
       // Admin can delete any registration
       registration = await Registration.findById(id).populate("event_id", "title");
       if (!registration) {
-        return res.status(404).json({ message: "Registration not found" });
+        return res.status(404).json({ message: "Registration not found or already deleted" });
       }
       await registration.deleteOne();
     } else {
@@ -64,23 +66,24 @@ const cancelRegistration = async (req, res) => {
       }).populate("event_id", "title");
 
       if (!registration) {
-        return res.status(404).json({
-          message: "Registration not found or you are not authorized to cancel it",
-        });
+        return res.status(403).json({ message: "You are not authorized to cancel this registration" });
       }
     }
 
-    // ✅ Log cancellation
-    await AdminLog.create({
-      user_id: req.user._id,
-      action: `Cancelled registration for event "${registration.event_id.title}"`,
-    });
+    // Log action (non-blocking)
+    try {
+      await AdminLog.create({
+        user_id: req.user._id,
+        action: `Cancelled registration for event "${registration.event_id?.title || "Unknown Event"}"`,
+      });
+    } catch (logErr) {
+      console.warn("Failed to log cancellation:", logErr);
+    }
 
-    res.json({ message: "Registration cancelled successfully" });
-
+    return res.json({ message: "Registration cancelled successfully" });
   } catch (err) {
     console.error("Cancel registration error:", err);
-    res.status(500).json({ message: "Server error" });
+    return res.status(500).json({ message: "Server error" });
   }
 };
 
