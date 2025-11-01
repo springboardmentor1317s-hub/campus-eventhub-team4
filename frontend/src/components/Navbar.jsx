@@ -46,11 +46,10 @@ function Navbar() {
             <ul className="navbar-nav mx-auto mb-2 mb-lg-0 text-center">
               <li className="nav-item mx-2 my-1">
                 <Link
-                  className={`btn ${
-                    isActive("/events")
+                  className={`btn ${isActive("/events")
                       ? "btn-primary text-white"
                       : "btn-outline-primary"
-                  }`}
+                    }`}
                   to="/events"
                 >
                   <i className="fa fa-calendar me-1"></i> Events
@@ -58,20 +57,26 @@ function Navbar() {
               </li>
               <li className="nav-item mx-2 my-1">
                 <Link
-                  className={`btn ${
-                    isActive("/user-dashboard") || isActive("/admin-dashboard")
+                  className={`btn ${isActive("/user-dashboard") ||
+                      isActive("/admin-dashboard") ||
+                      isActive("/superadmin-dashboard")
                       ? "btn-primary text-white"
                       : "btn-outline-primary"
-                  }`}
+                    }`}
                   to={
                     user?.accountType === "Student"
                       ? "/user-dashboard"
-                      : "/admin-dashboard"
+                      : user?.accountType === "College Admin"
+                        ? "/admin-dashboard"
+                        : user?.accountType === "Super Admin"
+                          ? "/superadmin-dashboard"
+                          : "/"
                   }
                 >
                   <i className="fa fa-tachometer-alt me-1"></i> Dashboard
                 </Link>
               </li>
+
             </ul>
           )}
 

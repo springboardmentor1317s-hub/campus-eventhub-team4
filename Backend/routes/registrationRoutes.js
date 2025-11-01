@@ -1,5 +1,4 @@
 const express = require("express");
-const { protect } = require("../middleware/authMiddleware");
 const {
   registerForEvent,
   cancelRegistration,
@@ -7,22 +6,71 @@ const {
   manageRegistration,
   getEventRegistrations,
   listRegistrations,
-  updateRegistration
+  updateRegistration,
+  downloadTicket,
 } = require("../controllers/registrationController");
+const { protect, authorizeRoles } = require("../middleware/authMiddleware");
 
 const router = express.Router();
 
-// Student actions
-router.post("/", protect, registerForEvent);
-router.delete("/:id", protect, cancelRegistration);
-router.get("/me", protect, myRegistrations);
+/**
+ * REGISTRATION ACCESS CONTROL
+ * ----------------------------------------
+ * Student        → register, cancel, view own registrations, download ticket
+ * College Admin  → manage registrations for their college events
+ * Super Admin    → view and manage all registrations across all colleges
+ */
 
-// Admin actions
-router.put("/manage", protect, manageRegistration);
-router.get("/event/:eventId", protect, getEventRegistrations);
-router.get("/", protect, listRegistrations);
+// 🔹 Student routes
+router.post(
+  "/",
+  protect,
+  authorizeRoles("Student", "Super Admin"), // Allow super admin testing/override
+  registerForEvent
+);
+router.delete(
+  "/:id",
+  protect,
+  authorizeRoles("Student", "Super Admin"),
+  cancelRegistration
+);
+router.get(
+  "/me",
+  protect,
+  authorizeRoles("Student", "Super Admin"),
+  myRegistrations
+);
+router.get(
+  "/:id/ticket",
+  protect,
+  authorizeRoles("Student", "Super Admin"),
+  downloadTicket
+);
 
-// PUT update registration status
-router.put("/:id", protect, updateRegistration);
+// 🔹 Admin & Super Admin routes
+router.put(
+  "/manage",
+  protect,
+  authorizeRoles("College Admin", "Super Admin"),
+  manageRegistration
+);
+router.get(
+  "/event/:eventId",
+  protect,
+  authorizeRoles("College Admin", "Super Admin"),
+  getEventRegistrations
+);
+router.get(
+  "/",
+  protect,
+  authorizeRoles("College Admin", "Super Admin"),
+  listRegistrations
+);
+router.put(
+  "/:id",
+  protect,
+  authorizeRoles("College Admin", "Super Admin"),
+  updateRegistration
+);
 
 module.exports = router;

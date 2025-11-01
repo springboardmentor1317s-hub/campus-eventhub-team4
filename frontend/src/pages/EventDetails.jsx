@@ -480,7 +480,7 @@ function EventDetails() {
 
             {/* Action Button */}
             <div className="mt-auto">
-              {profileData.accountType !== "College Admin" ? (
+              {profileData.accountType !== "College Admin" && profileData.accountType !== "Super Admin" ?  (
                 !registered ? (
                   <button
                     className="btn btn-success btn-lg w-100 py-3 fw-semibold shadow-sm"

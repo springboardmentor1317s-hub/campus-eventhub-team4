@@ -13,6 +13,7 @@ import EditEvent from "./pages/EditEvent";
 import UserDashboard from "./pages/UserDashboard";
 import AdminDashboard from "./pages/AdminDashboard";
 import ManageRegistrations from "./pages/ManageRegistrations";
+import SuperAdminDashboard from "./pages/SuperAdminDashboard"; // ✅ Added import
 
 // Components
 import Navbar from "./components/Navbar";
@@ -22,13 +23,15 @@ function App() {
   return (
     <Router>
       <Navbar />
-      <ToastContainer />
+      <ToastContainer position="top-center" />
 
       <Routes>
-        {/* Public Routes */}
+        {/* ---------- Public Routes ---------- */}
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
+
+        {/* ---------- General Protected Routes ---------- */}
         <Route
           path="/events"
           element={
@@ -37,7 +40,6 @@ function App() {
             </ProtectedRoute>
           }
         />
-        
         <Route
           path="/events/:id"
           element={
@@ -46,7 +48,8 @@ function App() {
             </ProtectedRoute>
           }
         />
-        {/* Student Protected Routes */}
+
+        {/* ---------- Student Routes ---------- */}
         <Route
           path="/user-dashboard"
           element={
@@ -56,7 +59,7 @@ function App() {
           }
         />
 
-        {/* College Admin Protected Routes */}
+        {/* ---------- College Admin Routes ---------- */}
         <Route
           path="/admin-dashboard"
           element={
@@ -90,7 +93,17 @@ function App() {
           }
         />
 
-        {/* 404 Fallback */}
+        {/* ---------- Super Admin Routes ---------- */}
+        <Route
+          path="/superadmin-dashboard"
+          element={
+            <ProtectedRoute role="Super Admin">
+              <SuperAdminDashboard />
+            </ProtectedRoute>
+          }
+        />
+
+        {/* ---------- 404 Fallback ---------- */}
         <Route
           path="*"
           element={

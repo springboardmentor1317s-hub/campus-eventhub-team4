@@ -47,11 +47,22 @@ function EditEvent() {
     try {
       await api.put(`/events/${id}`, eventData);
       toast.success("Event updated successfully");
-      navigate("/admin-dashboard");
+
+      // ✅ Get user from localStorage
+      const user = JSON.parse(localStorage.getItem("user"));
+
+      // ✅ Navigate based on account type
+      if (user?.accountType === "Super Admin") {
+        navigate("/superadmin-dashboard");
+      } else {
+        navigate("/admin-dashboard");
+      }
     } catch (err) {
+      console.error(err);
       toast.error("Failed to update event");
     }
   };
+
 
   return (
     <div className="container my-5">

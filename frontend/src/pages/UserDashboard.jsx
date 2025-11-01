@@ -38,12 +38,40 @@ function UserDashboard() {
     fetchData();
   }, []);
 
+  const downloadTicket = async (registrationId, eventTitle) => {
+    try {
+      // If your api instance attaches token automatically, you can omit headers below
+      const token = localStorage.getItem("token");
+
+      const response = await api.get(`/registrations/${registrationId}/ticket`, {
+        responseType: "blob",
+        headers: token ? { Authorization: `Bearer ${token}` } : undefined,
+      });
+
+      const blob = new Blob([response.data], { type: "application/pdf" });
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      const safeTitle = (eventTitle || "ticket").replace(/[^a-z0-9_\- ]/gi, "_");
+      link.setAttribute("download", `${safeTitle}_Ticket_${registrationId}.pdf`);
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      window.URL.revokeObjectURL(url);
+    } catch (err) {
+      console.error("Download ticket error:", err);
+      // Prefer server message if present
+      const msg = err?.response?.data?.message || "Failed to download ticket";
+      toast.error(msg);
+    }
+  };
+
   return (
     <div className="container my-5">
       {/* Header */}
       <div className="d-flex justify-content-between align-items-center mb-4">
         <h2>
-          <FaUser className="me-2" /> User Dashboard
+          <FaUser className="me-2" /> Student Dashboard
         </h2>
         <div>
           <button
@@ -72,7 +100,7 @@ function UserDashboard() {
               <div className="card border-0 shadow-lg rounded-4 overflow-hidden">
                 {/* Header */}
                 <div className="bg-gradient bg-primary text-white text-center py-3">
-                  <h5 className="mb-0 fw-bold">User Profile</h5>
+                  <h5 className="mb-0 fw-bold">Student Profile</h5>
                 </div>
 
                 {/* Body */}
@@ -215,11 +243,14 @@ function UserDashboard() {
                 </button>
               )}
               {r.status === "approved" && (
-                <button className="btn btn-sm btn-outline-success">
-                  <FaFileDownload className="me-1" />
-                  Ticket
-                </button>
-              )}
+  <button
+    className="btn btn-sm btn-outline-success"
+    onClick={() => downloadTicket(r._id, r.event_id.title)}
+  >
+    <FaFileDownload className="me-1" /> Ticket
+  </button>
+)}
+
             </div>
           </div>
         ))}

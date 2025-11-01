@@ -3,7 +3,15 @@ import { useNavigate, Link } from "react-router-dom";
 import api from "../services/api";
 import { toast } from "react-toastify";
 import { setToken } from "../services/auth";
-import { FaEnvelope, FaLock, FaUser, FaEye, FaEyeSlash, FaEnvelopeOpenText } from "react-icons/fa";
+import {
+  FaEnvelope,
+  FaLock,
+  FaEye,
+  FaEyeSlash,
+  FaUserShield,
+  FaUniversity,
+  FaUserGraduate,
+} from "react-icons/fa";
 
 function Login() {
   const [formData, setFormData] = useState({
@@ -12,7 +20,6 @@ function Login() {
     accountType: "Student",
   });
   const [showPassword, setShowPassword] = useState(false);
-
   const navigate = useNavigate();
 
   const handleChange = (e) => {
@@ -30,7 +37,9 @@ function Login() {
 
       toast.success("Login successful!");
 
-      if (res.data.user.accountType === "College Admin") {
+      if (res.data.user.accountType === "Super Admin") {
+        navigate("/superadmin-dashboard");
+      } else if (res.data.user.accountType === "College Admin") {
         navigate("/admin-dashboard");
       } else {
         navigate("/user-dashboard");
@@ -42,30 +51,36 @@ function Login() {
 
   return (
     <div className="d-flex align-items-center justify-content-center vh-100 bg-light">
-      <div className="card shadow-lg p-5" style={{ width: "420px", borderRadius: "15px" }}>
-        {/* Message Icon */}
+      <div
+        className="card shadow-lg p-5"
+        style={{ width: "420px", borderRadius: "15px" }}
+      >
+        {/* Icon */}
         <div className="text-center mb-3">
           <div
             className="d-inline-flex justify-content-center align-items-center rounded-circle"
             style={{
               width: "60px",
               height: "60px",
-              background: "linear-gradient(135deg, #1e3c72, #2a5298)", // bluish gradient
+              background: "linear-gradient(135deg, #1e3c72, #2a5298)",
               color: "white",
               fontSize: "28px",
             }}
           >
-            <FaEnvelope />
+            <FaUserShield />
           </div>
         </div>
 
-        {/* Heading */}
-        <h1 className="text-center mb-2" style={{
-          background: "linear-gradient(90deg, #4e54c8, #8f94fb)",
-          WebkitBackgroundClip: "text",
-          WebkitTextFillColor: "transparent",
-          fontWeight: "bold"
-        }}>
+        {/* Title */}
+        <h1
+          className="text-center mb-2"
+          style={{
+            background: "linear-gradient(90deg, #4e54c8, #8f94fb)",
+            WebkitBackgroundClip: "text",
+            WebkitTextFillColor: "transparent",
+            fontWeight: "bold",
+          }}
+        >
           Welcome Back
         </h1>
         <p className="text-center text-muted mb-4">
@@ -76,7 +91,15 @@ function Login() {
         <form onSubmit={handleLogin}>
           {/* Email */}
           <div className="mb-3 position-relative">
-            <FaEnvelope className="position-absolute" style={{ top: "50%", left: "12px", transform: "translateY(-50%)", color: "#6c757d" }} />
+            <FaEnvelope
+              className="position-absolute"
+              style={{
+                top: "50%",
+                left: "12px",
+                transform: "translateY(-50%)",
+                color: "#6c757d",
+              }}
+            />
             <input
               type="email"
               name="email"
@@ -90,7 +113,15 @@ function Login() {
 
           {/* Password */}
           <div className="mb-3 position-relative">
-            <FaLock className="position-absolute" style={{ top: "50%", left: "12px", transform: "translateY(-50%)", color: "#6c757d" }} />
+            <FaLock
+              className="position-absolute"
+              style={{
+                top: "50%",
+                left: "12px",
+                transform: "translateY(-50%)",
+                color: "#6c757d",
+              }}
+            />
             <input
               type={showPassword ? "text" : "password"}
               name="password"
@@ -102,7 +133,13 @@ function Login() {
             />
             <span
               className="position-absolute"
-              style={{ top: "50%", right: "12px", transform: "translateY(-50%)", cursor: "pointer", color: "#6c757d" }}
+              style={{
+                top: "50%",
+                right: "12px",
+                transform: "translateY(-50%)",
+                cursor: "pointer",
+                color: "#6c757d",
+              }}
               onClick={() => setShowPassword(!showPassword)}
             >
               {showPassword ? <FaEyeSlash /> : <FaEye />}
@@ -111,16 +148,28 @@ function Login() {
 
           {/* Account Type */}
           <div className="mb-3">
-            <select
-              name="accountType"
-              className="form-select"
-              value={formData.accountType}
-              onChange={handleChange}
-              required
-            >
-              <option value="Student">Student</option>
-              <option value="College Admin">College Admin</option>
-            </select>
+            <div className="input-group">
+              <span className="input-group-text bg-light border-end-0">
+                {formData.accountType === "Super Admin" ? (
+                  <FaUserShield />
+                ) : formData.accountType === "College Admin" ? (
+                  <FaUniversity />
+                ) : (
+                  <FaUserGraduate />
+                )}
+              </span>
+              <select
+                name="accountType"
+                className="form-select border-start-0"
+                value={formData.accountType}
+                onChange={handleChange}
+                required
+              >
+                <option value="Student">Student</option>
+                <option value="College Admin">College Admin</option>
+                <option value="Super Admin">Super Admin</option>
+              </select>
+            </div>
           </div>
 
           {/* Login Button */}
@@ -133,7 +182,17 @@ function Login() {
               fontWeight: "bold",
               borderRadius: "50px",
               padding: "10px 0",
+              boxShadow: "0 4px 10px rgba(78, 84, 200, 0.3)",
+              transition: "0.3s",
             }}
+            onMouseOver={(e) =>
+              (e.currentTarget.style.boxShadow =
+                "0 6px 14px rgba(78, 84, 200, 0.5)")
+            }
+            onMouseOut={(e) =>
+              (e.currentTarget.style.boxShadow =
+                "0 4px 10px rgba(78, 84, 200, 0.3)")
+            }
           >
             Sign In
           </button>
@@ -142,7 +201,11 @@ function Login() {
         {/* Signup Link */}
         <p className="text-center text-muted">
           Don’t have an account?{" "}
-          <Link to="/register" className="text-decoration-none" style={{ color: "#4e54c8", fontWeight: "bold" }}>
+          <Link
+            to="/register"
+            className="text-decoration-none"
+            style={{ color: "#4e54c8", fontWeight: "bold" }}
+          >
             Sign Up
           </Link>
         </p>

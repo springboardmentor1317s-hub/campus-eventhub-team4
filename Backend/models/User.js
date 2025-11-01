@@ -17,7 +17,7 @@ const userSchema = new mongoose.Schema({
   },
   accountType: {
     type: String,
-    enum: ['Student', 'College Admin'],
+    enum: ['Student', 'College Admin', 'Super Admin'],
     required: true,
   },
   password: {

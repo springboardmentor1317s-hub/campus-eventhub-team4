@@ -6,7 +6,7 @@ const createEvent = async (req, res) => {
     const { title, description, category, location, start_date, end_date, banner } = req.body;
 
     const event = await Event.create({
-      college_id: req.user._id, // comes from auth middleware
+      college_id: req.user._id, // created by College Admin
       title,
       description,
       category,
@@ -18,11 +18,12 @@ const createEvent = async (req, res) => {
 
     res.status(201).json(event);
   } catch (err) {
+    console.error(err);
     res.status(500).json({ message: "Failed to create event" });
   }
 };
 
-// ✅ Get All Events (with advanced filters)
+// ✅ Get All Events (with filters)
 const getEvents = async (req, res) => {
   try {
     const { category, college, location, start_date, end_date, title } = req.query;
@@ -35,14 +36,8 @@ const getEvents = async (req, res) => {
       else filters.college_id = college;
     }
 
-    if (location) {
-      // case-insensitive search
-      filters.location = { $regex: location, $options: "i" };
-    }
-
-    if (title) {
-      filters.title = { $regex: title, $options: "i" };
-    }
+    if (location) filters.location = { $regex: location, $options: "i" };
+    if (title) filters.title = { $regex: title, $options: "i" };
 
     if (start_date && end_date) {
       filters.start_date = { $gte: new Date(start_date), $lte: new Date(end_date) };
@@ -63,7 +58,6 @@ const getEvents = async (req, res) => {
   }
 };
 
-
 // ✅ Get Single Event by ID
 const getEventById = async (req, res) => {
   try {
@@ -75,48 +69,54 @@ const getEventById = async (req, res) => {
 
     res.json(event);
   } catch (err) {
+    console.error(err);
     res.status(500).json({ message: "Failed to fetch event" });
   }
 };
 
-// ✅ Update Event (Admin only, must own it)
+// ✅ Update Event (College Admin OR Super Admin)
 const updateEvent = async (req, res) => {
   try {
     const event = await Event.findById(req.params.id);
     if (!event) return res.status(404).json({ message: "Event not found" });
 
-    // ensure only owner admin can update
-    if (event.college_id.toString() !== req.user._id.toString()) {
+    // ✅ Allow Super Admin or the event’s owning College Admin
+    if (
+      event.college_id.toString() !== req.user._id.toString() &&
+      req.user.accountType !== "Super Admin"
+    ) {
       return res.status(403).json({ message: "Not authorized to update this event" });
     }
 
     const { title, description, category, location, start_date, end_date, banner } = req.body;
 
-    event.title = title || event.title;
-    event.description = description || event.description;
-    event.category = category || event.category;
-    event.location = location || event.location;
-    event.start_date = start_date || event.start_date;
-    event.end_date = end_date || event.end_date;
-    event.banner = banner || event.banner;
+    event.title = title ?? event.title;
+    event.description = description ?? event.description;
+    event.category = category ?? event.category;
+    event.location = location ?? event.location;
+    event.start_date = start_date ?? event.start_date;
+    event.end_date = end_date ?? event.end_date;
+    event.banner = banner ?? event.banner;
 
     await event.save();
     res.json(event);
   } catch (err) {
+    console.error(err);
     res.status(500).json({ message: "Failed to update event" });
   }
 };
 
-// ✅ Delete Event (Admin only, must own it)
+// ✅ Delete Event (College Admin OR Super Admin)
 const deleteEvent = async (req, res) => {
   try {
     const event = await Event.findById(req.params.id);
-    if (!event) {
-      return res.status(404).json({ message: "Event not found" });
-    }
+    if (!event) return res.status(404).json({ message: "Event not found" });
 
-    // Authorization check
-    if (event.college_id.toString() !== req.user._id.toString()) {
+    // ✅ Allow Super Admin or the event’s owning College Admin
+    if (
+      event.college_id.toString() !== req.user._id.toString() &&
+      req.user.accountType !== "Super Admin"
+    ) {
       return res.status(403).json({ message: "Not authorized to delete this event" });
     }
 
@@ -127,7 +127,6 @@ const deleteEvent = async (req, res) => {
     res.status(500).json({ message: "Failed to delete event" });
   }
 };
-
 
 module.exports = {
   createEvent,

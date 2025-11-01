@@ -6,17 +6,19 @@ const {
   updateEvent,
   deleteEvent,
 } = require("../controllers/eventController");
-const { protect } = require("../middleware/authMiddleware");
+const { protect, authorizeRoles } = require("../middleware/authMiddleware");
 
 const router = express.Router();
 
-// Public Routes
-router.get("/",protect, getEvents);
-router.get("/:id", getEventById);
+// 🔹 Public route for all authenticated users (Students, Admins, Super Admin)
+router.get("/", protect, getEvents);
 
-// Protected Routes (Admin only)
-router.post("/", protect, createEvent);
-router.put("/:id", protect, updateEvent);
-router.delete("/:id", protect, deleteEvent);
+// 🔹 Public single event view
+router.get("/:id", protect, getEventById);
+
+// 🔹 Protected routes (College Admin or Super Admin)
+router.post("/", protect, authorizeRoles("College Admin", "Super Admin"), createEvent);
+router.put("/:id", protect, authorizeRoles("College Admin", "Super Admin"), updateEvent);
+router.delete("/:id", protect, authorizeRoles("College Admin", "Super Admin"), deleteEvent);
 
 module.exports = router;
