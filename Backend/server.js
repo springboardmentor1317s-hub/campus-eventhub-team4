@@ -17,7 +17,7 @@ const PORT = process.env.PORT || 5000;
 
 // Middleware
 app.use(cors({
-  origin: "http://localhost:5173",  // explicitly allow frontend
+  origin: "https://campus-eventhub-team4.vercel.app",  // explicitly allow frontend
   credentials: true                 // allow cookies/headers
 }));
 app.use(express.json());
