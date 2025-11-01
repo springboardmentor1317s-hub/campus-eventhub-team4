@@ -22,7 +22,6 @@ const router = express.Router();
 router.post(
   "/",
   protect,
-  authorizeRoles("Student", "College Admin", "Super Admin"),
   addFeedback
 );
 
@@ -33,7 +32,6 @@ router.get("/", protect, getFeedbacks);
 router.put(
   "/:id",
   protect,
-  authorizeRoles("College Admin", "Super Admin"),
   editFeedback
 );
 
@@ -41,7 +39,6 @@ router.put(
 router.delete(
   "/:id",
   protect,
-  authorizeRoles("College Admin", "Super Admin"),
   deleteFeedback
 );
 
@@ -49,7 +46,6 @@ router.delete(
 router.post(
   "/:id/replies",
   protect,
-  authorizeRoles("College Admin", "Super Admin"),
   addReply
 );
 
