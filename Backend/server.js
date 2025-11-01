@@ -15,11 +15,25 @@ const authRoutes = require("./routes/auth");
 const app = express();
 const PORT = process.env.PORT || 5000;
 
+const allowedOrigins = [
+  "https://campus-eventhub-team4.vercel.app", // deployed frontend
+  "http://localhost:5173",                    // local development
+];
+
 // Middleware
-app.use(cors({
-  origin: "https://campus-eventhub-team4.vercel.app",  // explicitly allow frontend
-  credentials: true                 // allow cookies/headers
-}));
+app.use(
+  cors({
+    origin: (origin, callback) => {
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
+    credentials: true, // allow cookies/headers
+  })
+);
+
 app.use(express.json());
 
 // MongoDB Connection Function
