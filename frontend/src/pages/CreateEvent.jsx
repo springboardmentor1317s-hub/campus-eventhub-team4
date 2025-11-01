@@ -21,17 +21,55 @@ function CreateEvent() {
   };
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      await api.post("/events", formData, {
-        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-      });
-      toast.success("Event created successfully!");
-      navigate("/admin-dashboard");
-    } catch (err) {
-      toast.error(err.response?.data?.message || "Failed to create event");
+  e.preventDefault();
+
+  try {
+    // ✅ Get token from localStorage
+    const token = localStorage.getItem("token");
+    if (!token) {
+      toast.error("Unauthorized! Please log in again.");
+      navigate("/login");
+      return;
     }
-  };
+
+    // ✅ API call to create event
+    const response = await api.post("/events", formData, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+
+    // ✅ Success feedback
+    if (response.status === 201 || response.status === 200) {
+      toast.success("🎉 Event created successfully!");
+    } else {
+      toast.warning("Event created, but unexpected response received.");
+    }
+
+    // ✅ Retrieve user info (safer access)
+    const user = JSON.parse(localStorage.getItem("user"));
+
+    // ✅ Redirect based on account type
+    if (user?.accountType === "Super Admin") {
+      navigate("/superadmin-dashboard");
+    } else if (user?.accountType === "College Admin") {
+      navigate("/admin-dashboard");
+    } else {
+      navigate("/"); // fallback route for safety
+    }
+
+  } catch (error) {
+    console.error("❌ Error creating event:", error);
+
+    // ✅ Detailed error handling
+    if (error.response) {
+      toast.error(error.response.data?.message || "Server error while creating event");
+    } else if (error.request) {
+      toast.error("No response from server. Please check your internet connection.");
+    } else {
+      toast.error("Unexpected error occurred while creating the event.");
+    }
+  }
+};
+
 
   return (
     <div className="container my-5">
